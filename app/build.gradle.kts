@@ -37,11 +37,15 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "19"
+        jvmTarget = "17"
     }
     buildFeatures {
         buildConfig = true
         compose = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
@@ -69,6 +73,9 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.okhttp)
 
     // DI
     implementation(platform(libs.koin.bom))
