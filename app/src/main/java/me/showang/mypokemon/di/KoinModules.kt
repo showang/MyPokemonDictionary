@@ -4,6 +4,8 @@ import com.shopback.respect.core.RequestExecutor
 import com.shopback.respect.okhttp.OkhttpRequestExecutor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.json.Json
+import me.showang.mypokemon.api.ApiFactory
 import me.showang.mypokemon.home.HomeViewModel
 import me.showang.mypokemon.navigator.MyPokemonNavigator
 import me.showang.mypokemon.navigator.MyPokemonNavigatorImpl
@@ -38,6 +40,14 @@ object KoinModules {
     private val network = module {
         single { OkHttpClient() }
         single<RequestExecutor> { OkhttpRequestExecutor(get()) }
+        single {
+            Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+                explicitNulls = false
+            }
+        }
+        single { ApiFactory(get()) }
     }
 
     val modules: List<Module> = listOf(viewModel, repository, coroutines, navigator, network)

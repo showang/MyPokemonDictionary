@@ -21,7 +21,7 @@ import me.showang.mypokemon.home.ui.TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID
 import me.showang.mypokemon.home.ui.TEST_TAG_MY_POCKET_ITEM_FORMAT_WITH_ID
 import me.showang.mypokemon.home.ui.TEST_TAG_MY_POCKET_LAZY_ROW
 import me.showang.mypokemon.model.MyPokemon
-import me.showang.mypokemon.model.PocketMonType
+import me.showang.mypokemon.model.PokemonType
 import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PokemonTypeGroup
 import me.showang.mypokemon.navigator.MyPokemonNavigator
@@ -111,7 +111,7 @@ class HomeActivityTestCases {
     private val mockPokemonTypeGroup = (0..14).map { index ->
         val pocketMonId = 150 - index * 10
         PokemonTypeGroup(
-            pocketMonType = PocketMonType(
+            pokemonType = PokemonType(
                 id = pocketMonId.toLong(),
                 name = "Type#$pocketMonId"
             ),

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 
     id(libs.plugins.compose.compiler.get().pluginId) version libs.versions.kotlin
 }
@@ -75,6 +76,9 @@ dependencies {
     // KotlinX
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+
+    // KotlinX Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
