@@ -16,19 +16,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImagePainter.State.Empty.painter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import me.showang.mypokemon.R
-import me.showang.mypokemon.model.PocketMonInfo
+import me.showang.mypokemon.model.PokemonInfo
 
 @Composable
 fun PokemonInfoItem(
     modifier: Modifier = Modifier,
-    pocketMonInfo: PocketMonInfo,
-    pocketBallClickDelegate: (PocketMonInfo) -> Unit = {},
+    pokemonInfo: PokemonInfo,
+    pocketBallClickDelegate: (PokemonInfo) -> Unit = {},
+    pocketBallTestTag: String? = null
 ) {
     Box(modifier = modifier) {
         Column(
@@ -41,7 +44,7 @@ fun PokemonInfoItem(
                     modifier = Modifier.size(100.dp),
                     painter = rememberAsyncImagePainter(
                         ImageRequest.Builder(LocalContext.current)
-                            .data(pocketMonInfo.imageUrl)
+                            .data(pokemonInfo.imageUrl)
                             .crossfade(true)
                             .build()
                     ),
@@ -52,17 +55,18 @@ fun PokemonInfoItem(
                         .size(32.dp)
                         .padding(4.dp)
                         .align(Alignment.TopEnd)
+                        .testTag(pocketBallTestTag ?: "")
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple(bounded = true, radius = 14.dp),
-                            onClick = { pocketBallClickDelegate(pocketMonInfo) }
+                            onClick = { pocketBallClickDelegate(pokemonInfo) }
                         ),
                     painter = painterResource(id = R.drawable.ic_pocket_ball),
                     contentDescription = "pokemon ball"
                 )
             }
             Text(
-                text = pocketMonInfo.name,
+                text = pokemonInfo.name,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.secondary
             )

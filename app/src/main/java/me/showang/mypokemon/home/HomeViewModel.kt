@@ -1,10 +1,11 @@
 package me.showang.mypokemon.home
 
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import me.showang.mypokemon.model.MyPokemon
+import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.repository.PokemonRepository
 import me.showang.transtate.TranstateViewModel
 import timber.log.Timber
@@ -51,19 +52,21 @@ class HomeViewModel(
         }
     }
 
-    fun saveToMyPokemon(catchId: Long) = viewModelScope.launch(IO) {
+    fun saveToMyPokemon(pokemonInfo: PokemonInfo) = viewModelScope.launch(IO) {
         runCatching {
-            repository.saveMyPocketMonster(catchId)
+            repository.saveMyPocketMonster(pokemonInfo.monsterId)
         }.onFailure { error ->
             Timber.e(error, "Failed to save to my pocket")
+            startTransform(HomeUiEvent.Error(error))
         }
     }
 
-    fun removeFromMyPokemon(catchId: Long) = viewModelScope.launch(IO) {
+    fun removeFromMyPokemon(myPokemon: MyPokemon) = viewModelScope.launch(IO) {
         runCatching {
-            repository.removeMyPocketMonster(catchId)
+            repository.removeMyPocketMonster(myPokemon.catchId)
         }.onFailure { error ->
             Timber.e(error, "Failed to delete from my pocket")
+            startTransform(HomeUiEvent.Error(error))
         }
     }
 }

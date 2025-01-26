@@ -12,16 +12,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import me.showang.mypokemon.model.PocketMonInfo
+import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PocketMonType
 
 @Composable
 fun TypeCategorySection(
     modifier: Modifier = Modifier,
     type: PocketMonType,
-    pocketMons: List<PocketMonInfo>,
-    pocketMonClickDelegate: (PocketMonInfo) -> Unit,
-    saveMyMonsterDelegate: (PocketMonInfo) -> Unit,
+    pocketMons: List<PokemonInfo>,
+    pocketMonClickDelegate: (PokemonInfo) -> Unit,
+    saveMyMonsterDelegate: (PokemonInfo) -> Unit,
 ) {
     Column(modifier) {
         PocketMonInfoSection(
@@ -35,7 +35,7 @@ fun TypeCategorySection(
                             indication = rememberRipple(bounded = true),
                             onClick = { pocketMonClickDelegate(info) }
                         ),
-                        pocketMonInfo = info,
+                        pokemonInfo = info,
                         pocketBallClickDelegate = { saveMyMonsterDelegate(info) }
                     )
                 }
@@ -54,7 +54,7 @@ fun TypeCategorySectionPreview() {
             name = "Type",
         ),
         pocketMons = (1..10).map {
-            PocketMonInfo(
+            PokemonInfo(
                 monsterId = it.toString(),
                 name = "PocketMon#$it",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$it.png"

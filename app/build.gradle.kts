@@ -32,7 +32,6 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            isDebuggable = true
         }
     }
 
@@ -55,6 +54,13 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        packaging {
+            resources.excludes.addAll(
+                arrayOf("META-INF/LICENSE.md", "META-INF/LICENSE-notice.md", "**/MANIFEST.MF")
+            )
+        }
+    }
 }
 
 dependencies {
@@ -73,6 +79,7 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
 
     implementation(libs.coil.compose)
     implementation(libs.coil.okhttp)
@@ -80,6 +87,7 @@ dependencies {
     // DI
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
 
     // OkHttp
     implementation(platform(libs.okhttp.bom))
@@ -91,10 +99,12 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.mockkAndroid)
 
+    androidTestImplementation(libs.kotlin.test.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mockkAndroid)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

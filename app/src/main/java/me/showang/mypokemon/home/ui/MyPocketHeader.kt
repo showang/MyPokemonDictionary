@@ -8,34 +8,45 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import me.showang.mypokemon.model.MyPocketMonster
-import me.showang.mypokemon.model.PocketMonInfo
+import me.showang.mypokemon.model.MyPokemon
+import me.showang.mypokemon.model.PokemonInfo
+
+const val TEST_TAG_MY_POCKET_LAZY_ROW = "MyPocketLazyRow"
+const val TEST_TAG_MY_POCKET_ITEM_FORMAT_WITH_ID = "MyPocketItem:%d"
+const val TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID = "MyPocketItemBall:%d"
 
 @Composable
 fun MyPocketHeader(
     modifier: Modifier = Modifier,
-    myPocketMonsters: List<MyPocketMonster>,
-    pocketMonClickDelegate: (PocketMonInfo) -> Unit,
-    removeMyMonsterDelegate: (MyPocketMonster) -> Unit,
+    myPokemons: List<MyPokemon>,
+    pocketMonClickDelegate: (PokemonInfo) -> Unit,
+    removeMyMonsterDelegate: (MyPokemon) -> Unit,
 ) {
     Column(modifier = modifier) {
         PocketMonInfoSection(
+            modifier = Modifier,
             titleText = "My Pocket",
-            sizeText = myPocketMonsters.size.toString(),
+            sizeText = myPokemons.size.toString(),
             itemBuilder = {
-                items(myPocketMonsters) { myPocketMonster ->
+                items(
+                    myPokemons,
+                    key = { it.catchId },
+                ) { myPocketMonster ->
                     PokemonInfoItem(
-                        modifier = Modifier.clickable(
+                        modifier = Modifier.testTag(TEST_TAG_MY_POCKET_ITEM_FORMAT_WITH_ID.format(myPocketMonster.catchId)).clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple(bounded = true),
-                            onClick = { pocketMonClickDelegate(myPocketMonster.pocketMonInfo) }
+                            onClick = { pocketMonClickDelegate(myPocketMonster.pokemonInfo) }
                         ),
-                        pocketMonInfo = myPocketMonster.pocketMonInfo,
-                        pocketBallClickDelegate = { removeMyMonsterDelegate(myPocketMonster) }
+                        pokemonInfo = myPocketMonster.pokemonInfo,
+                        pocketBallClickDelegate = { removeMyMonsterDelegate(myPocketMonster) },
+                        pocketBallTestTag = TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID.format(myPocketMonster.catchId)
                     )
                 }
             },
+            lazyRowTestTag = TEST_TAG_MY_POCKET_LAZY_ROW
         )
     }
 }
@@ -44,10 +55,10 @@ fun MyPocketHeader(
 @Composable
 fun MyPocketHeaderPreview() {
     MyPocketHeader(
-        myPocketMonsters = (1..10).map {
-            MyPocketMonster(
-                myMonsterId = it.toString(),
-                pocketMonInfo = PocketMonInfo(
+        myPokemons = (1..10).map {
+            MyPokemon(
+                catchId = it.toLong(),
+                pokemonInfo = PokemonInfo(
                     monsterId = it.toString(),
                     name = "PocketMon#$it",
                     imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$it.png"

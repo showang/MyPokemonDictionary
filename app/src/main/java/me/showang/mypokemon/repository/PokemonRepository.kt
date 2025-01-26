@@ -3,16 +3,16 @@ package me.showang.mypokemon.repository
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-import me.showang.mypokemon.model.MyPocketMonster
-import me.showang.mypokemon.model.PocketMonInfo
+import me.showang.mypokemon.model.MyPokemon
+import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PocketMonType
 import me.showang.mypokemon.model.PokemonTypeGroup
 
 private const val ImageUrlTemplate = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/%d.png"
 private val mockMyPocketMonsters = (1..10).map {
-    MyPocketMonster(
-        myMonsterId = it.toString(),
-        pocketMonInfo = PocketMonInfo(
+    MyPokemon(
+        catchId = it.toLong(),
+        pokemonInfo = PokemonInfo(
             monsterId = it.toString(),
             name = "PocketMon#$it",
             imageUrl = ImageUrlTemplate.format(it)
@@ -28,7 +28,7 @@ private val mockPokemonTypeGroup = (0..14).map { index ->
         ),
         pocketMonsters = (0..9).map {
             val pId = pocketMonId - it
-            PocketMonInfo(
+            PokemonInfo(
                 monsterId = pId.toString(),
                 name = "PocketMon#$pId",
                 imageUrl = ImageUrlTemplate.format(pId)
@@ -39,11 +39,11 @@ private val mockPokemonTypeGroup = (0..14).map { index ->
 
 interface PokemonRepository {
 
-    val myPocketMonstersFlow: StateFlow<List<MyPocketMonster>>
+    val myPocketMonstersFlow: StateFlow<List<MyPokemon>>
 
     val pokemonTypeGroupsFlow: StateFlow<List<PokemonTypeGroup>>
 
-    suspend fun fetchMyPocketMonsters(): List<MyPocketMonster> = withContext(IO) {
+    suspend fun fetchMyPocketMonsters(): List<MyPokemon> = withContext(IO) {
         mockMyPocketMonsters
     }
 
@@ -51,7 +51,7 @@ interface PokemonRepository {
         mockPokemonTypeGroup
     }
 
-    suspend fun saveMyPocketMonster(pocketMonId: Long)
+    suspend fun saveMyPocketMonster(pokemonId: String)
 
-    suspend fun removeMyPocketMonster(myMonsterId: Long)
+    suspend fun removeMyPocketMonster(catchId: Long)
 }

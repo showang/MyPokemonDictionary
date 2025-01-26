@@ -1,19 +1,20 @@
 package me.showang.mypokemon
 
 import android.app.Application
+import me.showang.mypokemon.di.KoinModules
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 
 class MyPokemonApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
         startKoin {
-            modules(
-                module {
-
-                }
-            )
+            modules(KoinModules.modules)
         }
     }
 }

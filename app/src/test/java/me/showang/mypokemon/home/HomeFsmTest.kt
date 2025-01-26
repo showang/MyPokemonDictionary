@@ -1,7 +1,7 @@
 package me.showang.mypokemon.home
 
 import io.mockk.mockk
-import me.showang.mypokemon.model.MyPocketMonster
+import me.showang.mypokemon.model.MyPokemon
 import me.showang.mypokemon.model.PokemonTypeGroup
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,13 +19,13 @@ class HomeFsmTest {
 
         @Test
         fun `(InitState) test InitDataEvent`() {
-            val myPocketList: List<MyPocketMonster> = mockk()
+            val myPocketList: List<MyPokemon> = mockk()
             val typeGroups: List<PokemonTypeGroup> = mockk()
             val target = HomeUiState.InitState()
             val testEvent = HomeUiEvent.InitData(myPocketList, typeGroups)
             target.startTransition(testEvent)?.newState.run {
                 assert(this is HomeUiState.LaunchedState)
-                assert((this as HomeUiState.LaunchedState).myPocketMonsters == myPocketList)
+                assert((this as HomeUiState.LaunchedState).myPokemons == myPocketList)
                 assert(typeCategories == typeGroups)
             }
         }
@@ -35,29 +35,29 @@ class HomeFsmTest {
 
         @Test
         fun `(LaunchedState) test UpdateTypeGroupsEvent`() {
-            val myPocketList: List<MyPocketMonster> = mockk()
+            val myPocketList: List<MyPokemon> = mockk()
             val typeGroups: List<PokemonTypeGroup> = mockk()
             val target = HomeUiState.LaunchedState(myPocketList, typeGroups)
             val newTypeGroups: List<PokemonTypeGroup> = listOf()
             val testEvent = HomeUiEvent.UpdateTypeGroups(newTypeGroups)
             target.startTransition(testEvent)?.newState.run {
                 assert(this is HomeUiState.LaunchedState)
-                assert((this as HomeUiState.LaunchedState).myPocketMonsters == myPocketList)
+                assert((this as HomeUiState.LaunchedState).myPokemons == myPocketList)
                 assert(typeCategories == newTypeGroups)
             }
         }
 
         @Test
         fun `(LaunchedState) test UpdateMyPocketEvent`() {
-            val myPocketList: List<MyPocketMonster> = mockk()
+            val myPocketList: List<MyPokemon> = mockk()
             val typeGroups: List<PokemonTypeGroup> = mockk()
             val target = HomeUiState.LaunchedState(myPocketList, typeGroups)
-            val newPocketList: List<MyPocketMonster> = listOf()
+            val newPocketList: List<MyPokemon> = listOf()
             val testEvent = HomeUiEvent.UpdateMyPocket(newPocketList)
             target.startTransition(testEvent)?.newState.run {
                 assert(this is HomeUiState.LaunchedState)
                 assert((this as HomeUiState.LaunchedState).typeCategories == typeGroups)
-                assert(myPocketMonsters == newPocketList)
+                assert(myPokemons == newPocketList)
             }
         }
     }
@@ -66,13 +66,13 @@ class HomeFsmTest {
 
         @Test
         fun `(ErrorState) test InitDataEvent`() {
-            val myPocketList: List<MyPocketMonster> = mockk()
+            val myPocketList: List<MyPokemon> = mockk()
             val typeGroups: List<PokemonTypeGroup> = listOf()
             val target = HomeUiState.ErrorState("error")
             val testEvent = HomeUiEvent.InitData(myPocketList, typeGroups)
             target.startTransition(testEvent)?.newState.run {
                 assert(this is HomeUiState.LaunchedState)
-                assert((this as HomeUiState.LaunchedState).myPocketMonsters == myPocketList)
+                assert((this as HomeUiState.LaunchedState).myPokemons == myPocketList)
                 assert(typeCategories == typeGroups)
             }
         }

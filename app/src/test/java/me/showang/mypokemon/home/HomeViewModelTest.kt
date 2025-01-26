@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import me.showang.mypokemon.fundations.BaseViewModelTest
-import me.showang.mypokemon.model.MyPocketMonster
+import me.showang.mypokemon.model.MyPokemon
 import me.showang.mypokemon.model.PokemonTypeGroup
 import me.showang.mypokemon.repository.PokemonRepository
 import kotlin.test.AfterTest
@@ -26,9 +26,9 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
     private lateinit var mockRepository: PokemonRepository
     private var observerJob: Job? = null
 
-    private lateinit var mockMyPocketsFlow: StateFlow<List<MyPocketMonster>>
+    private lateinit var mockMyPocketsFlow: StateFlow<List<MyPokemon>>
     private lateinit var mockTypeGroupsFlow: StateFlow<List<PokemonTypeGroup>>
-    private lateinit var myPocketCollectorSlot: CapturingSlot<FlowCollector<List<MyPocketMonster>>>
+    private lateinit var myPocketCollectorSlot: CapturingSlot<FlowCollector<List<MyPokemon>>>
     private lateinit var typeGroupCollectorSlot: CapturingSlot<FlowCollector<List<PokemonTypeGroup>>>
 
     @BeforeTest
@@ -60,7 +60,7 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
 
     @Test
     fun testInitData_success() {
-        val mockMyPockets: List<MyPocketMonster> = mockk()
+        val mockMyPockets: List<MyPokemon> = mockk()
         val mockTypeGroups: List<PokemonTypeGroup> = mockk()
         coEvery { mockRepository.fetchMyPocketMonsters() } returns mockMyPockets
         coEvery { mockRepository.fetchPokemonTypeGroups() } returns mockTypeGroups
@@ -69,7 +69,7 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
             initData()
         }
         check<HomeUiEvent.InitData>(1) {
-            assertEquals(mockMyPockets, myPocketMonsters)
+            assertEquals(mockMyPockets, myPokemons)
             assertEquals(mockTypeGroups, typeCategories)
         }
         coVerify(exactly = 1) { mockRepository.fetchMyPocketMonsters() }
@@ -95,7 +95,7 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
 
     @Test
     fun testUpdateTypeGroups() {
-        val mockMyPockets: List<MyPocketMonster> = mockk()
+        val mockMyPockets: List<MyPokemon> = mockk()
         val mockTypeGroups: List<PokemonTypeGroup> = mockk()
         val testTypeGroupOne: List<PokemonTypeGroup> = listOf(mockk())
         val testTypeGroupTwo: List<PokemonTypeGroup> = listOf(mockk(), mockk())
@@ -120,10 +120,10 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
 
     @Test
     fun testUpdateMyPocket() {
-        val mockMyPockets: List<MyPocketMonster> = mockk()
+        val mockMyPockets: List<MyPokemon> = mockk()
         val mockTypeGroups: List<PokemonTypeGroup> = mockk()
-        val testMyPocketOne: List<MyPocketMonster> = listOf(mockk())
-        val testMyPocketTwo: List<MyPocketMonster> = listOf(mockk(), mockk())
+        val testMyPocketOne: List<MyPokemon> = listOf(mockk())
+        val testMyPocketTwo: List<MyPokemon> = listOf(mockk(), mockk())
         viewModel = initViewModel(HomeUiState.LaunchedState(mockMyPockets, mockTypeGroups))
 
         coVerify(exactly = 1, timeout = 1000) { mockMyPocketsFlow.collect(any()) }
@@ -136,10 +136,10 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
         }
 
         check<HomeUiEvent.UpdateMyPocket>(1) {
-            assertEquals(testMyPocketOne, myPocketMonsters)
+            assertEquals(testMyPocketOne, myPokemons)
         }
         check<HomeUiEvent.UpdateMyPocket>(2) {
-            assertEquals(testMyPocketTwo, myPocketMonsters)
+            assertEquals(testMyPocketTwo, myPokemons)
         }
     }
 
