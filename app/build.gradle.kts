@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.timber)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.mockkAndroid)
 
     androidTestImplementation(libs.androidx.junit)
