@@ -98,6 +98,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.mockkAndroid)
+    testImplementation(libs.androidx.arch.core.testing)
 
     androidTestImplementation(libs.kotlin.test.junit)
     androidTestImplementation(libs.androidx.junit)

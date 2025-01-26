@@ -1,5 +1,6 @@
 package me.showang.mypokemon.home
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.Awaits
 import io.mockk.CapturingSlot
 import io.mockk.coEvery
@@ -12,16 +13,30 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
+import me.showang.mypokemon.AsyncUnitTest
+import me.showang.mypokemon.ViewModelTestRule
 import me.showang.mypokemon.fundations.BaseViewModelTest
 import me.showang.mypokemon.model.MyPokemon
+import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PokemonTypeGroup
 import me.showang.mypokemon.repository.PokemonRepository
+import me.showang.transtate.async.AsyncDelegate
+import org.junit.Rule
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
+
+    @get:Rule
+    val asyncTestRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val viewModelTestRule = ViewModelTestRule()
 
     private lateinit var mockRepository: PokemonRepository
     private var observerJob: Job? = null
@@ -50,6 +65,7 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
     @AfterTest
     fun teardown() {
         observerJob?.cancel()
+        stopKoin()
     }
 
     private fun initViewModel(initState: HomeUiState = HomeUiState.InitState()): HomeViewModel {
@@ -145,12 +161,15 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
 
     @Test
     fun testSaveMyPokemon() {
-        val testId = 123456L
-        val idSlot = CapturingSlot<Long>()
+        val testId = "123456"
+        val mockMyPokemon: PokemonInfo = mockk {
+            every { monsterId } returns testId
+        }
+        val idSlot = CapturingSlot<String>()
         coEvery { mockRepository.saveMyPocketMonster(capture(idSlot)) }
         viewModel = initViewModel()
         testSuspendMethod {
-            saveToMyPokemon(testId)
+            saveToMyPokemon(mockMyPokemon)
         }
         coVerify(exactly = 1) { mockRepository.saveMyPocketMonster(testId) }
     }
@@ -158,11 +177,14 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
     @Test
     fun testRemoveMyPokemon() {
         val testId = 123456L
+        val mockMyPokemon: MyPokemon = mockk {
+            every { catchId } returns testId
+        }
         val idSlot = CapturingSlot<Long>()
         coEvery { mockRepository.removeMyPocketMonster(capture(idSlot)) }
         viewModel = initViewModel()
         testSuspendMethod {
-            removeFromMyPokemon(testId)
+            removeFromMyPokemon(mockMyPokemon)
         }
         coVerify(exactly = 1) { mockRepository.removeMyPocketMonster(testId) }
     }
