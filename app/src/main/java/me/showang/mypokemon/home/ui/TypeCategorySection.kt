@@ -10,10 +10,14 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.showang.mypokemon.model.PokemonInfo
-import me.showang.mypokemon.model.PokemonType
+
+const val TEST_TAG_TYPE_CATEGORY_LAZY_ROW_FORMAT_WITH_TYPE_NAME = "TypeCategoryLazyRow:%s"
+const val TEST_TAG_TYPE_CATEGORY_ITEM_FORMAT_WITH_ID = "TypeCategoryItem:%d"
+const val TEST_TAG_TYPE_CATEGORY_ITEM_BALL_FORMAT_WITH_ID = "TypeCategoryItemBall:%d"
 
 @Composable
 fun TypeCategorySection(
@@ -24,7 +28,7 @@ fun TypeCategorySection(
     saveMyMonsterDelegate: (PokemonInfo) -> Unit,
 ) {
     Column(modifier) {
-        PocketMonInfoSection(
+        PokemonInfoSection(
             titleText = typeName,
             sizeText = pocketMons.size.toString(),
             itemBuilder = {
@@ -34,12 +38,14 @@ fun TypeCategorySection(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple(bounded = true),
                             onClick = { pocketMonClickDelegate(info) }
-                        ),
+                        ).testTag(TEST_TAG_TYPE_CATEGORY_ITEM_FORMAT_WITH_ID.format(info.monsterId)),
                         pokemonInfo = info,
-                        pocketBallClickDelegate = { saveMyMonsterDelegate(info) }
+                        pocketBallClickDelegate = { saveMyMonsterDelegate(info) },
+                        pocketBallTestTag = TEST_TAG_TYPE_CATEGORY_ITEM_BALL_FORMAT_WITH_ID.format(info.monsterId)
                     )
                 }
             },
+            lazyRowTestTag = TEST_TAG_TYPE_CATEGORY_LAZY_ROW_FORMAT_WITH_TYPE_NAME.format(typeName)
         )
         Spacer(modifier = Modifier.height(24.dp))
     }

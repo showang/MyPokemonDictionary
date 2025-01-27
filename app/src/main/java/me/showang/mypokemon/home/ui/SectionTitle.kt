@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.showang.mypokemon.ui.theme.MyPokemonTheme
+import me.showang.mypokemon.utils.uppercaseFirstChar
 
 @Composable
 fun SectionTitle(
@@ -23,10 +24,7 @@ fun SectionTitle(
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = titleText.run {
-                val firstChar = get(0).uppercaseChar()
-                replaceRange(0, 1, firstChar.toString())
-            },
+            text = titleText.uppercaseFirstChar(),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )

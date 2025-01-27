@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -51,7 +50,7 @@ fun EvolvesLayout(
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = evolvesFromInfo?.name ?: "No evolves",
+                    text = evolvesFromInfo?.displayName ?: "No evolves",
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.Black
                 )

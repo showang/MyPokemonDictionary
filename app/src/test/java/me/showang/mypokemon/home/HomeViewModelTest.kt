@@ -13,18 +13,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
-import me.showang.mypokemon.AsyncUnitTest
 import me.showang.mypokemon.ViewModelTestRule
 import me.showang.mypokemon.fundations.BaseViewModelTest
 import me.showang.mypokemon.model.MyPokemon
 import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PokemonTypeGroup
 import me.showang.mypokemon.repository.PokemonRepository
-import me.showang.transtate.async.AsyncDelegate
 import org.junit.Rule
-import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.dsl.module
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -161,17 +157,14 @@ class HomeViewModelTest : BaseViewModelTest<HomeUiState, HomeViewModel>() {
 
     @Test
     fun testSaveMyPokemon() {
-        val testId = "123456"
-        val mockMyPokemon: PokemonInfo = mockk {
-            every { monsterId } returns testId
-        }
-        val idSlot = CapturingSlot<String>()
-        coEvery { mockRepository.saveMyPocketMonster(capture(idSlot)) }
+        val mockMyPokemon: PokemonInfo = mockk()
+        val infoSlot = CapturingSlot<PokemonInfo>()
+        coEvery { mockRepository.saveMyPocketMonster(capture(infoSlot)) }
         viewModel = initViewModel()
         testSuspendMethod {
             saveToMyPokemon(mockMyPokemon)
         }
-        coVerify(exactly = 1) { mockRepository.saveMyPocketMonster(testId) }
+        coVerify(exactly = 1) { mockRepository.saveMyPocketMonster(mockMyPokemon) }
     }
 
     @Test

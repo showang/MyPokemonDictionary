@@ -4,6 +4,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
 import me.showang.mypokemon.model.MyPokemon
 import me.showang.mypokemon.model.PokemonDetails
+import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PokemonTypeGroup
 
 interface PokemonRepository {
@@ -18,9 +19,9 @@ interface PokemonRepository {
 
     suspend fun fetchPokemonTypeGroups(): List<PokemonTypeGroup>
 
-    suspend fun saveMyPocketMonster(name: String)
+    suspend fun saveMyPocketMonster(info: PokemonInfo)
 
     suspend fun removeMyPocketMonster(catchId: Long)
 
-    suspend fun fetchPokemonDetails(name: String): PokemonDetails
+    suspend fun fetchPokemonDetails(name: String): PokemonDetails?
 }

@@ -12,7 +12,10 @@ fun InitScreen(
     state: PokemonDetailUiState.InitState,
 ) {
     val pokemonInfo = state.pokemonInfo
-    PokemonDetailHeader(pokemonInfo = pokemonInfo)
+    PokemonDetailHeader(
+        modifier = modifier,
+        pokemonInfo = pokemonInfo
+    )
 }
 
 @Preview(showBackground = true)

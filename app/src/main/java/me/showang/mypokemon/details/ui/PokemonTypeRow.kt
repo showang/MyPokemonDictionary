@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.showang.mypokemon.utils.uppercaseFirstChar
 
 @Composable
 fun PokemonTypeRow(
@@ -25,13 +26,13 @@ fun PokemonTypeRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         types.forEach {
-            PokemonTypeItem(type = it)
+            PokemonTypeItem(type = it.uppercaseFirstChar())
         }
     }
 }
 
 @Composable
-fun PokemonTypeItem(
+private fun PokemonTypeItem(
     modifier: Modifier = Modifier,
     type: String
 ) {

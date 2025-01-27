@@ -18,10 +18,10 @@ class PokemonDetailViewModel(
     fun init() = viewModelScope.launch {
         runCatching {
             val details = repository.fetchPokemonDetails(pokemonInfo.name)
-            val evolutionInfo = details.evolutionFrom?.let { name ->
-                repository.fetchPokemonDetails(name).info
+            val evolutionInfo = details?.evolutionFrom?.let { name ->
+                repository.fetchPokemonDetails(name)?.info
             }
-            PokemonDetailUiModel(details, evolutionInfo)
+            PokemonDetailUiModel(details!!, evolutionInfo)
         }.onFailure { error ->
             Timber.e(error, "fetchPokemonDetails failed")
         }.getOrNull()?.let { uiModel ->

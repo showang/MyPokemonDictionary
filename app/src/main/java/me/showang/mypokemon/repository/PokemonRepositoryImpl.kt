@@ -21,7 +21,6 @@ import me.showang.mypokemon.model.MyPokemon
 import me.showang.mypokemon.model.PokemonDetails
 import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PokemonTypeGroup
-import timber.log.Timber
 
 class PokemonRepositoryImpl(
     private val apiFactory: ApiFactory,
@@ -48,43 +47,45 @@ class PokemonRepositoryImpl(
     override fun initData() = CoroutineScope(IO).launch {
         val allPokemonEntities = database.pokemonDataDao().getAllPokemonData()
         if (allPokemonEntities.isNotEmpty()) {
-            Timber.d("initDataFromDb")
             // load from db
-            allPokemonEntities.chunked(10).map { sublist ->
-                async {
-                    sublist.forEach { entity ->
-                        val pokemonDetails = entity.toPokemonDetails()
-                        mutex.withLock {
-                            pokemonDetailCacheMap[entity.name] = pokemonDetails
-                        }
-                        pokemonDetails.types.forEach { type ->
-                            mutex.withLock {
-                                val typePokemonList = typePokemonListCacheMap[type] ?: emptyList()
-                                typePokemonListCacheMap[type] =
-                                    typePokemonList.toMutableList().apply {
-                                        addSorted(pokemonDetails.info)
-                                    }
-                            }
-                        }
-                    }
-                }
-            }.forEach { it.await() }
-            mutex.withLock {
-                updateTypeGroups()
-            }
+            initDataFromDb(allPokemonEntities)
         } else {
-            Timber.d("initDataFromApi")
             initDataFromApi()
         }
     }
 
-    private fun initDataFromApi() {
+    private suspend fun initDataFromDb(entities: List<PokemonDataEntity>) = withContext(IO) {
+        entities.chunked(SIZE_CHUNKED_FOR_BATCH).map { sublist ->
+            async {
+                sublist.forEach { entity ->
+                    val pokemonDetails = entity.toPokemonDetails()
+                    mutex.withLock {
+                        pokemonDetailCacheMap[entity.name] = pokemonDetails
+                    }
+                    pokemonDetails.types.forEach { type ->
+                        mutex.withLock {
+                            val typePokemonList = typePokemonListCacheMap[type] ?: emptyList()
+                            typePokemonListCacheMap[type] =
+                                typePokemonList.toMutableList().apply {
+                                    addSorted(pokemonDetails.info)
+                                }
+                        }
+                    }
+                }
+            }
+        }.forEach { it.await() }
+        mutex.withLock {
+            updateTypeGroups()
+        }
+    }
+
+    private fun CoroutineScope.initDataFromApi() {
         if (apiDataJob?.isActive == true) {
             return
         }
-        apiDataJob = CoroutineScope(IO).launch {
+        apiDataJob = launch {
             val allPokemonName = apiFactory.createAllPokemonNameApi().request(requestExecutor)
-            allPokemonName.chunked(10).map {
+            allPokemonName.chunked(SIZE_CHUNKED_FOR_BATCH).map {
                 async {
                     batchFetchingData(it)
                 }
@@ -104,7 +105,7 @@ class PokemonRepositoryImpl(
         nameList.mapNotNull { pokemonName ->
             runCatching {
                 val pokemonTypeDeferred = async {
-                    apiFactory.createPokemonTypeApi(pokemonName)
+                    apiFactory.createPokemonBasicInfoApi(pokemonName)
                         .request(requestExecutor)
                 }
                 val pokemonDetailsDeferred = async {
@@ -153,26 +154,22 @@ class PokemonRepositoryImpl(
         mPokemonTypeGroupsFlow.value = typeGroups
     }
 
-    override suspend fun saveMyPocketMonster(name: String) {
-        val pokemonDetails = pokemonDetailCacheMap[name]
-        if (pokemonDetails != null) {
-            val myPokemon = MyPokemon(
-                catchId = System.currentTimeMillis(),
-                pokemonInfo = pokemonDetails.info
-            )
-            myPokemonMemCache.add(myPokemon)
-            mMyPocketMonstersFlow.value = myPokemonMemCache.toList()
-            database.myPokemonDao().insertMyPokemon(MyPokemonEntity.from(myPokemon))
-        }
+    override suspend fun saveMyPocketMonster(info: PokemonInfo) {
+        if (myPokemonMemCache.size >= 300) return
+        val myPokemon = MyPokemon(
+            catchId = System.currentTimeMillis(),
+            pokemonInfo = info
+        )
+        myPokemonMemCache.add(myPokemon)
+        mMyPocketMonstersFlow.value = myPokemonMemCache.toList()
+        database.myPokemonDao().insertMyPokemon(MyPokemonEntity.from(myPokemon))
     }
 
     override suspend fun removeMyPocketMonster(catchId: Long) {
-        val index = myPokemonMemCache.indexOfFirst { it.catchId == catchId }
-        if (index >= 0) {
-            myPokemonMemCache.removeAt(index)
+        if (myPokemonMemCache.removeIf { it.catchId == catchId }) {
             mMyPocketMonstersFlow.value = myPokemonMemCache.toList()
-            database.myPokemonDao().deleteMyPokemonById(catchId)
         }
+        database.myPokemonDao().deleteMyPokemonById(catchId)
     }
 
     override suspend fun fetchMyPocketMonsters() = withContext(IO) {
@@ -198,10 +195,9 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override suspend fun fetchPokemonDetails(name: String): PokemonDetails {
+    override suspend fun fetchPokemonDetails(name: String): PokemonDetails? {
         return pokemonDetailCacheMap[name]
             ?: database.pokemonDataDao().getPokemonByName(name)?.toPokemonDetails()
-            ?: throw IllegalArgumentException("Pokemon not found")
     }
 
     private fun MutableList<PokemonInfo>.addSorted(item: PokemonInfo) {
@@ -214,5 +210,9 @@ class PokemonRepositoryImpl(
         } else {
             this.add(index, item)
         }
+    }
+
+    companion object {
+        private const val SIZE_CHUNKED_FOR_BATCH = 10
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImagePainter.State.Empty.painter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -43,10 +42,10 @@ fun PokemonDetailHeader(
                     .crossfade(true)
                     .build(),
             ),
-            contentDescription = "${pokemonInfo.name} Image"
+            contentDescription = "${pokemonInfo.displayName} Image"
         )
         Text(
-            text = pokemonInfo.name,
+            text = pokemonInfo.displayName,
             style = MaterialTheme.typography.titleLarge,
             color = Color.Black,
             fontWeight = FontWeight.Bold,

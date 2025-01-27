@@ -21,18 +21,18 @@ const val TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID = "MyPocketItemBall:%d"
 @Composable
 fun MyPocketHeader(
     modifier: Modifier = Modifier,
-    myPokemons: List<MyPokemon>,
+    myPokemonList: List<MyPokemon>,
     pocketMonClickDelegate: (PokemonInfo) -> Unit,
     removeMyMonsterDelegate: (MyPokemon) -> Unit,
 ) {
     Column(modifier = modifier) {
-        PocketMonInfoSection(
+        PokemonInfoSection(
             modifier = Modifier,
             titleText = "My Pocket",
-            sizeText = myPokemons.size.toString(),
+            sizeText = myPokemonList.size.toString(),
             itemBuilder = {
                 items(
-                    myPokemons,
+                    myPokemonList,
                     key = { it.catchId },
                 ) { myPocketMonster ->
                     PokemonInfoItem(
@@ -59,7 +59,7 @@ fun MyPocketHeader(
 @Composable
 fun MyPocketHeaderPreview() {
     MyPocketHeader(
-        myPokemons = (1..10).map {
+        myPokemonList = (1..10).map {
             MyPokemon(
                 catchId = it.toLong(),
                 pokemonInfo = PokemonInfo(

@@ -14,8 +14,8 @@ data class PokemonDataEntity(
     val name: String,
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
-    @ColumnInfo(name = "types_json_array")
-    val typesJsonArray: String,
+    @ColumnInfo(name = "types_array")
+    val typesArray: String,
     @ColumnInfo(name = "description")
     val description: String,
     @ColumnInfo(name = "evolution_from")
@@ -27,7 +27,7 @@ data class PokemonDataEntity(
                 id = detail.info.monsterId,
                 name = detail.info.name,
                 imageUrl = detail.info.imageUrl,
-                typesJsonArray = detail.types.joinToString(","),
+                typesArray = detail.types.joinToString(","),
                 description = detail.description,
                 evolutionFrom = detail.evolutionFrom
             )
@@ -42,7 +42,7 @@ fun PokemonDataEntity.toPokemonDetails(): PokemonDetails {
             name = name,
             imageUrl = imageUrl
         ),
-        types = typesJsonArray.split(","),
+        types = typesArray.split(","),
         description = description,
         evolutionFrom = evolutionFrom
     )

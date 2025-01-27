@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter.State.Empty.painter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -58,7 +57,7 @@ fun PokemonInfoItem(
                         .testTag(pocketBallTestTag ?: "")
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(bounded = true, radius = 14.dp),
+                            indication = rememberRipple(bounded = false),
                             onClick = { pocketBallClickDelegate(pokemonInfo) }
                         ),
                     painter = painterResource(id = R.drawable.ic_pocket_ball),
@@ -66,7 +65,7 @@ fun PokemonInfoItem(
                 )
             }
             Text(
-                text = pokemonInfo.name,
+                text = pokemonInfo.displayName,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.secondary
             )

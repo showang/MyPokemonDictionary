@@ -21,6 +21,10 @@ class MyPokemonApplication : Application(), KoinComponent {
             androidContext(this@MyPokemonApplication)
             modules(KoinModules.modules)
         }
-        get<PokemonRepository>().initData()
+        runCatching {
+            get<PokemonRepository>().initData()
+        }.onFailure {
+            Timber.e(it, "initData failed")
+        }
     }
 }

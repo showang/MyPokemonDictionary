@@ -54,7 +54,7 @@ class HomeViewModel(
 
     fun saveToMyPokemon(pokemonInfo: PokemonInfo) = viewModelScope.launch(IO) {
         runCatching {
-            repository.saveMyPocketMonster(pokemonInfo.name)
+            repository.saveMyPocketMonster(pokemonInfo)
         }.onFailure { error ->
             Timber.e(error, "Failed to save to my pocket")
             startTransform(HomeUiEvent.Error(error))

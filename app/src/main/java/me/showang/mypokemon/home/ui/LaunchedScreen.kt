@@ -1,8 +1,10 @@
 package me.showang.mypokemon.home.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -20,24 +22,31 @@ fun LaunchedScreen(
     onSaveMyMonsterClickDelegate: (PokemonInfo) -> Unit,
     onRemoveMyMonsterClickDelegate: (MyPokemon) -> Unit,
 ) {
-    LazyColumn(modifier = modifier.testTag(TEST_TAG_LAUNCHED_SCREEN_LAZY_COLUMN)) {
-        item("MyPocketHeader") {
+    Column(modifier = modifier) {
+        AnimatedVisibility(state.myPokemons.isNotEmpty()) {
             MyPocketHeader(
-                myPokemons = state.myPokemons,
+                myPokemonList = state.myPokemons,
                 pocketMonClickDelegate = onPokemonClickDelegate,
                 removeMyMonsterDelegate = onRemoveMyMonsterClickDelegate
             )
         }
-        items(
-            items = state.typeCategories,
-            key = { typeGroup -> typeGroup.typeName }
-        ) { typeGroup ->
-            TypeCategorySection(
-                typeName = typeGroup.typeName,
-                pocketMons = typeGroup.pokemonInfos,
-                pocketMonClickDelegate = onPokemonClickDelegate,
-                saveMyMonsterDelegate = onSaveMyMonsterClickDelegate,
-            )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)
+                .testTag(TEST_TAG_LAUNCHED_SCREEN_LAZY_COLUMN)
+        ) {
+            items(
+                items = state.typeCategories,
+                key = { typeGroup -> typeGroup.typeName }
+            ) { typeGroup ->
+                TypeCategorySection(
+                    typeName = typeGroup.typeName,
+                    pocketMons = typeGroup.pokemonInfos,
+                    pocketMonClickDelegate = onPokemonClickDelegate,
+                    saveMyMonsterDelegate = onSaveMyMonsterClickDelegate,
+                )
+            }
         }
     }
 }
