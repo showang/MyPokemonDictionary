@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
     id(libs.plugins.compose.compiler.get().pluginId) version libs.versions.kotlin
 }
 
@@ -97,6 +98,11 @@ dependencies {
     // OkHttp
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
+
+    // room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     implementation(libs.timber)
 
