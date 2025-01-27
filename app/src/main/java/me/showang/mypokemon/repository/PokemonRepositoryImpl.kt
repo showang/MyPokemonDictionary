@@ -198,6 +198,12 @@ class PokemonRepositoryImpl(
         }
     }
 
+    override suspend fun fetchPokemonDetails(name: String): PokemonDetails {
+        return pokemonDetailCacheMap[name]
+            ?: database.pokemonDataDao().getPokemonByName(name)?.toPokemonDetails()
+            ?: throw IllegalArgumentException("Pokemon not found")
+    }
+
     private fun MutableList<PokemonInfo>.addSorted(item: PokemonInfo) {
         val index = this.binarySearch { it.monsterId.compareTo(item.monsterId) }
         if (index == 0) {

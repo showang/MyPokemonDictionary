@@ -11,6 +11,7 @@ import kotlinx.serialization.json.Json
 import me.showang.mypokemon.api.ApiFactory
 import me.showang.mypokemon.db.MyPokemonDatabase
 import me.showang.mypokemon.db.MyPokemonDatabase.Companion.DATABASE_NAME
+import me.showang.mypokemon.details.PokemonDetailViewModel
 import me.showang.mypokemon.home.HomeViewModel
 import me.showang.mypokemon.navigator.MyPokemonNavigator
 import me.showang.mypokemon.navigator.MyPokemonNavigatorImpl
@@ -21,6 +22,7 @@ import me.showang.transtate.async.AsyncDelegate
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import kotlin.reflect.KClass
 
@@ -30,8 +32,9 @@ object KoinModules {
         single<PokemonRepository> { PokemonRepositoryImpl(get(), get(), get()) }
     }
 
-    private val viewModel = module {
-        single { HomeViewModel(get(), get()) }
+    private val viewModelModule = module {
+        viewModel { HomeViewModel(get(), get()) }
+        viewModel { params -> PokemonDetailViewModel(params.get(), get(), get()) }
     }
 
     private val coroutines = module {
@@ -63,5 +66,5 @@ object KoinModules {
     private fun <T : RoomDatabase, Clazz : KClass<T>> Clazz.create(context: Context, name: String) =
         Room.databaseBuilder(context, this.java, name).build()
 
-    val modules: List<Module> = listOf(viewModel, repository, coroutines, navigator, network, database)
+    val modules: List<Module> = listOf(viewModelModule, repository, coroutines, navigator, network, database)
 }

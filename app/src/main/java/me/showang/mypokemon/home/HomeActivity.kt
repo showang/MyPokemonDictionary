@@ -62,7 +62,7 @@ class HomeActivity : ComponentActivity() {
                 onSaveMyMonsterClickDelegate = viewModel::saveToMyPokemon,
                 onRemoveMyMonsterClickDelegate = viewModel::removeFromMyPokemon,
             )
-            is HomeUiState.ErrorState -> ErrorScreen(modifier, state)
+            is HomeUiState.ErrorState -> ErrorScreen(modifier, state.message)
         }
     }
 }
