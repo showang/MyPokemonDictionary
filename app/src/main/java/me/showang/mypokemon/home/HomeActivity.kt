@@ -58,7 +58,7 @@ class HomeActivity : ComponentActivity() {
             is HomeUiState.LaunchedState -> LaunchedScreen(
                 modifier = modifier,
                 state = state,
-                onPokemonClickDelegate = { navigator.navigateToPokemonDetail(this, it.monsterId) },
+                onPokemonClickDelegate = { navigator.navigateToPokemonDetail(this, it) },
                 onSaveMyMonsterClickDelegate = viewModel::saveToMyPokemon,
                 onRemoveMyMonsterClickDelegate = viewModel::removeFromMyPokemon,
             )

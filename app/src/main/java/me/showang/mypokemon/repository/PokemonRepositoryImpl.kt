@@ -101,12 +101,24 @@ class PokemonRepositoryImpl(
         mPokemonTypeGroupsFlow.value = typeGroups
     }
 
-    override suspend fun saveMyPocketMonster(pokemonId: String) {
-        // TODO("Not yet implemented")
+    override suspend fun saveMyPocketMonster(name: String) {
+        val pokemonDetails = pokemonDetailCacheMap[name]
+        if (pokemonDetails != null) {
+            val myPokemon = MyPokemon(
+                catchId = System.currentTimeMillis(),
+                pokemonInfo = pokemonDetails.info
+            )
+            myPokemonMemCache.add(myPokemon)
+            mMyPocketMonstersFlow.value = myPokemonMemCache.toList()
+        }
     }
 
     override suspend fun removeMyPocketMonster(catchId: Long) {
-        // TODO("Not yet implemented")
+        val index = myPokemonMemCache.indexOfFirst { it.catchId == catchId }
+        if (index >= 0) {
+            myPokemonMemCache.removeAt(index)
+            mMyPocketMonstersFlow.value = myPokemonMemCache.toList()
+        }
     }
 
     override suspend fun fetchMyPocketMonsters() = withContext(IO) {

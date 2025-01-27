@@ -21,7 +21,6 @@ import me.showang.mypokemon.home.ui.TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID
 import me.showang.mypokemon.home.ui.TEST_TAG_MY_POCKET_ITEM_FORMAT_WITH_ID
 import me.showang.mypokemon.home.ui.TEST_TAG_MY_POCKET_LAZY_ROW
 import me.showang.mypokemon.model.MyPokemon
-import me.showang.mypokemon.model.PokemonType
 import me.showang.mypokemon.model.PokemonInfo
 import me.showang.mypokemon.model.PokemonTypeGroup
 import me.showang.mypokemon.navigator.MyPokemonNavigator
@@ -74,8 +73,8 @@ class HomeActivityTestCases {
     @Test
     fun testLaunched_clickMyPocketItem() {
         val clickItemIndex = 9
-        val clickItemId = "10"
-        val clickMyPokemonId = 10L
+        val item = mockMyPocketMonsters[clickItemIndex]
+        val clickMyPokemonId = item.catchId
         stateHelper.waitForComposeAttached()
         composeRule.run {
             mainClock.autoAdvance = false
@@ -90,7 +89,7 @@ class HomeActivityTestCases {
                 onNodeWithTag(TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID.format(clickMyPokemonId))
             myPocketSecondItemBall.performClick()
 
-            verify(exactly = 1) { mockNavigator.navigateToPokemonDetail(any(), clickItemId) }
+            verify(exactly = 1) { mockNavigator.navigateToPokemonDetail(any(), item.pokemonInfo) }
             verify(exactly = 1) { mockViewModel.removeFromMyPokemon(mockMyPocketMonsters[clickItemIndex]) }
         }
     }
@@ -111,10 +110,7 @@ class HomeActivityTestCases {
     private val mockPokemonTypeGroup = (0..14).map { index ->
         val pocketMonId = 150 - index * 10
         PokemonTypeGroup(
-            pokemonType = PokemonType(
-                id = pocketMonId.toLong(),
-                name = "Type#$pocketMonId"
-            ),
+            typeName = "Type#$pocketMonId",
             pokemonInfos = (0..9).map {
                 val pId = pocketMonId - it
                 PokemonInfo(

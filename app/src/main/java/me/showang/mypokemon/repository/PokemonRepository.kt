@@ -16,7 +16,7 @@ interface PokemonRepository {
 
     suspend fun fetchPokemonTypeGroups(): List<PokemonTypeGroup>
 
-    suspend fun saveMyPocketMonster(pokemonId: String)
+    suspend fun saveMyPocketMonster(name: String)
 
     suspend fun removeMyPocketMonster(catchId: Long)
 }
