@@ -23,7 +23,10 @@ fun SectionTitle(
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = titleText,
+            text = titleText.run {
+                val firstChar = get(0).uppercaseChar()
+                replaceRange(0, 1, firstChar.toString())
+            },
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
@@ -39,7 +42,7 @@ fun SectionTitle(
 fun SectionTitlePreview() {
     MyPokemonTheme {
         SectionTitle(
-            titleText = "Title",
+            titleText = "title",
             itemCountText = "10"
         )
     }

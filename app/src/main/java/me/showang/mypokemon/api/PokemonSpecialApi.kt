@@ -17,24 +17,25 @@ class PokemonSpecialApi(
     override val url: String = "https://pokeapi.co/api/v2/pokemon-species/$pokemonName"
     override val httpMethod: HttpMethod = HttpMethod.GET
     override fun parse(bytes: ByteArray): Result {
-        val entity = json.decodeFromString<ResponseEntity>(String(bytes))
+        val jsonString = String(bytes)
+        val entity = json.decodeFromString<ResponseEntity>(jsonString)
         return Result(
             name = pokemonName,
-            evolvesFrom = entity.evolvesFromEntity.name,
+            evolvesFrom = entity.evolvesFromEntity?.name,
             descriptions = entity.flavorTextJsonArray.firstOrNull()?.jsonObject?.get("flavor_text")?.jsonPrimitive?.content ?: ""
         )
     }
 
     data class Result(
         val name: String,
-        val evolvesFrom: String,
+        val evolvesFrom: String?,
         val descriptions: String
     )
 
     @Serializable
     private data class ResponseEntity(
         @SerialName("evolves_from_species")
-        val evolvesFromEntity: EvolvesFromEntity,
+        val evolvesFromEntity: EvolvesFromEntity?,
         @SerialName("flavor_text_entries")
         val flavorTextJsonArray: JsonArray
     )

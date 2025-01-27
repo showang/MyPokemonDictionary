@@ -4,7 +4,7 @@ import kotlinx.serialization.json.Json
 
 class ApiFactory(private val json: Json) {
     fun createPokemonTypeApi(pokemonName: String) =
-        PokemonTypeApi(json, pokemonName)
+        PokemonBasicInfoApi(json, pokemonName)
 
     fun createPokemonSpecialApi(pokemonName: String) =
         PokemonSpecialApi(json, pokemonName)

@@ -31,11 +31,11 @@ fun LaunchedScreen(
         }
         items(
             items = state.typeCategories,
-            key = { typeGroup -> typeGroup.pocketMonType.id }
+            key = { typeGroup -> typeGroup.typeName }
         ) { typeGroup ->
             TypeCategorySection(
-                type = typeGroup.pocketMonType,
-                pocketMons = typeGroup.pocketMonsters,
+                typeName = typeGroup.typeName,
+                pocketMons = typeGroup.pokemonInfos,
                 pocketMonClickDelegate = onPokemonClickDelegate,
                 saveMyMonsterDelegate = onSaveMyMonsterClickDelegate,
             )

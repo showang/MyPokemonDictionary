@@ -13,19 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.showang.mypokemon.model.PokemonInfo
-import me.showang.mypokemon.model.PocketMonType
+import me.showang.mypokemon.model.PokemonType
 
 @Composable
 fun TypeCategorySection(
     modifier: Modifier = Modifier,
-    type: PocketMonType,
+    typeName: String,
     pocketMons: List<PokemonInfo>,
     pocketMonClickDelegate: (PokemonInfo) -> Unit,
     saveMyMonsterDelegate: (PokemonInfo) -> Unit,
 ) {
     Column(modifier) {
         PocketMonInfoSection(
-            titleText = type.name,
+            titleText = typeName,
             sizeText = pocketMons.size.toString(),
             itemBuilder = {
                 items(pocketMons) { info ->
@@ -49,10 +49,7 @@ fun TypeCategorySection(
 @Composable
 fun TypeCategorySectionPreview() {
     TypeCategorySection(
-        type = PocketMonType(
-            id = 1,
-            name = "Type",
-        ),
+        typeName = "Normal",
         pocketMons = (1..10).map {
             PokemonInfo(
                 monsterId = it.toString(),

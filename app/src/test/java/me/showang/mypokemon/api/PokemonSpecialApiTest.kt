@@ -8,8 +8,16 @@ class PokemonSpecialApiTest : BaseApiTest() {
 
     @Test
     fun testRequest() {
-        runBlocking {
-            PokemonSpecialApi(json, "fearow").request()
-        }.let(::println)
+//        val names = runBlocking {
+//            AllPokemonNameApi(json).request()
+//        }
+//        names.forEach { name ->
+            runBlocking {
+//                println("Requesting $name")
+                PokemonSpecialApi(json, "bulbasaur").request()
+            }.let {
+                println("bulbasaur: $it")
+            }
+//        }
     }
 }

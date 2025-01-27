@@ -1,6 +1,6 @@
 package me.showang.mypokemon.model
 
-data class PocketMonType(
+data class PokemonType(
     val id: Long,
     val name: String,
 )

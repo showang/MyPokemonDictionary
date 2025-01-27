@@ -115,7 +115,7 @@ class HomeActivityTestCases {
                 id = pocketMonId.toLong(),
                 name = "Type#$pocketMonId"
             ),
-            pocketMonsters = (0..9).map {
+            pokemonInfos = (0..9).map {
                 val pId = pocketMonId - it
                 PokemonInfo(
                     monsterId = pId.toString(),

@@ -21,7 +21,7 @@ import org.koin.dsl.module
 object KoinModules {
 
     private val repository = module {
-        singleOf<PokemonRepository>(::PokemonRepositoryImpl)
+        single<PokemonRepository> { PokemonRepositoryImpl(get(), get()) }
     }
 
     private val viewModel = module {

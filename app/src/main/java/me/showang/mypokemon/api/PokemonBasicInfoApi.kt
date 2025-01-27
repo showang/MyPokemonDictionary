@@ -7,10 +7,10 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import me.showang.mypokemon.api.PokemonTypeApi.Result
+import me.showang.mypokemon.api.PokemonBasicInfoApi.Result
 import me.showang.respect.RestfulApi
 
-class PokemonTypeApi(
+class PokemonBasicInfoApi(
     private val json: Json,
     private val pokemonName: String
 ) : RestfulApi<Result>() {
@@ -25,6 +25,7 @@ class PokemonTypeApi(
             ?.jsonPrimitive?.contentOrNull
         val resultEntity = json.decodeFromJsonElement<ResponseEntity>(jsonElement)
         return Result(
+            id = resultEntity.id,
             name = pokemonName,
             imageUrl = imageUrl ?: "",
             types = resultEntity.types.map { it.type.name }
@@ -32,6 +33,7 @@ class PokemonTypeApi(
     }
 
     data class Result(
+        val id: Long,
         val name: String,
         val imageUrl: String,
         val types: List<String>
@@ -39,6 +41,7 @@ class PokemonTypeApi(
 
     @Serializable
     private data class ResponseEntity(
+        val id: Long,
         val types: List<SlotEntity>
     )
 
