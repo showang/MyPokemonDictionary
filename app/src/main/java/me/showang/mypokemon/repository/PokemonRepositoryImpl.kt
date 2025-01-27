@@ -19,7 +19,7 @@ import me.showang.mypokemon.model.PokemonTypeGroup
 
 class PokemonRepositoryImpl(
     private val apiFactory: ApiFactory,
-    private val requestExecutor: RequestExecutor
+    private val requestExecutor: RequestExecutor,
 ) : PokemonRepository {
 
     private val myPokemonMemCache = mutableListOf<MyPokemon>()
@@ -48,43 +48,51 @@ class PokemonRepositoryImpl(
         }
         apiDataJob = CoroutineScope(IO).launch {
             val allPokemonName = apiFactory.createAllPokemonNameApi().request(requestExecutor)
-            allPokemonName.chunked(10).map { subList ->
-                subList.mapNotNull { pokemonName ->
-                    runCatching {
-                        val pokemonTypeDeferred = async {
-                            apiFactory.createPokemonTypeApi(pokemonName)
-                                .request(requestExecutor)
-                        }
-                        val pokemonDetailsDeferred = async {
-                            apiFactory.createPokemonSpecialApi(pokemonName)
-                                .request(requestExecutor)
-                        }
-                        val pokemonType = pokemonTypeDeferred.await()
-                        val pokemonDescriptions = pokemonDetailsDeferred.await()
-                        PokemonDetails(
-                            info = PokemonInfo(
-                                monsterId = pokemonType.id.toString(),
-                                name = pokemonType.name,
-                                imageUrl = pokemonType.imageUrl
-                            ),
-                            types = pokemonType.types,
-                            descriptions = pokemonDescriptions.descriptions,
-                            evolutionFrom = pokemonDescriptions.evolvesFrom
-                        )
-                    }.getOrNull()?.let { pokemonDetails ->
-                        mutex.withLock {
-                            pokemonDetailCacheMap[pokemonName] = pokemonDetails
-                            pokemonDetails.types.forEach { type ->
-                                typePokemonListCacheMap[type] =
-                                    (typePokemonListCacheMap[type] ?: emptyList()) + pokemonDetails.info
-                            }
+            allPokemonName.chunked(10).map {
+                async {
+                    batchFetchingData(it)
+                }
+            }.forEach { it.await() }
+        }
+    }
+
+    private suspend fun batchFetchingData(nameList: List<String>) = withContext(IO) {
+        nameList.mapNotNull { pokemonName ->
+            runCatching {
+                val pokemonTypeDeferred = async {
+                    apiFactory.createPokemonTypeApi(pokemonName)
+                        .request(requestExecutor)
+                }
+                val pokemonDetailsDeferred = async {
+                    apiFactory.createPokemonSpecialApi(pokemonName)
+                        .request(requestExecutor)
+                }
+                val pokemonType = pokemonTypeDeferred.await()
+                val pokemonDescriptions = pokemonDetailsDeferred.await()
+                PokemonDetails(
+                    info = PokemonInfo(
+                        monsterId = pokemonType.id,
+                        name = pokemonType.name,
+                        imageUrl = pokemonType.imageUrl
+                    ),
+                    types = pokemonType.types,
+                    descriptions = pokemonDescriptions.descriptions,
+                    evolutionFrom = pokemonDescriptions.evolvesFrom
+                )
+            }.getOrNull()?.let { pokemonDetails ->
+                mutex.withLock {
+                    pokemonDetailCacheMap[pokemonName] = pokemonDetails
+                    pokemonDetails.types.forEach { type ->
+                        val typePokemonList = typePokemonListCacheMap[type] ?: emptyList()
+                        typePokemonListCacheMap[type] = typePokemonList.toMutableList().apply {
+                            addSorted(pokemonDetails.info)
                         }
                     }
                 }
-                mutex.withLock {
-                    updateTypeGroups()
-                }
             }
+        }
+        mutex.withLock {
+            updateTypeGroups()
         }
     }
 
@@ -139,8 +147,8 @@ class PokemonRepositoryImpl(
         }
     }
 
-    fun MutableList<PokemonInfo>.addSorted(item: PokemonInfo) {
-        val index = this.binarySearch { it.name.compareTo(item.name) }
+    private fun MutableList<PokemonInfo>.addSorted(item: PokemonInfo) {
+        val index = this.binarySearch { it.monsterId.compareTo(item.monsterId) }
         if (index < 0) {
             this.add(-index - 1, item)
         } else {

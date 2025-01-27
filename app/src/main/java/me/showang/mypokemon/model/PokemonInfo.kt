@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PokemonInfo(
-    val monsterId: String,
+    val monsterId: Long,
     val name: String,
     val imageUrl: String,
 ) : Parcelable

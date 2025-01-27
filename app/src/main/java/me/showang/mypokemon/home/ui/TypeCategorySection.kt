@@ -52,7 +52,7 @@ fun TypeCategorySectionPreview() {
         typeName = "Normal",
         pocketMons = (1..10).map {
             PokemonInfo(
-                monsterId = it.toString(),
+                monsterId = it.toLong(),
                 name = "PocketMon#$it",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$it.png"
             )
