@@ -27,7 +27,6 @@ fun LaunchedScreen(
                 pocketMonClickDelegate = onPokemonClickDelegate,
                 removeMyMonsterDelegate = onRemoveMyMonsterClickDelegate
             )
-            HorizontalDivider()
         }
         items(
             items = state.typeCategories,

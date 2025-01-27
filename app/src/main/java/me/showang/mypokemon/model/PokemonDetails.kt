@@ -4,5 +4,5 @@ data class PokemonDetails(
     val info: PokemonInfo,
     val types: List<String>,
     val evolutionFrom: String?,
-    val descriptions: String,
+    val description: String,
 )

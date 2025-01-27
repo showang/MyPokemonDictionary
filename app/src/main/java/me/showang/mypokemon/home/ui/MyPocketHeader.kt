@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,11 +36,13 @@ fun MyPocketHeader(
                     key = { it.catchId },
                 ) { myPocketMonster ->
                     PokemonInfoItem(
-                        modifier = Modifier.testTag(TEST_TAG_MY_POCKET_ITEM_FORMAT_WITH_ID.format(myPocketMonster.catchId)).clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(bounded = true),
-                            onClick = { pocketMonClickDelegate(myPocketMonster.pokemonInfo) }
-                        ),
+                        modifier = Modifier
+                            .testTag(TEST_TAG_MY_POCKET_ITEM_FORMAT_WITH_ID.format(myPocketMonster.catchId))
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(bounded = true),
+                                onClick = { pocketMonClickDelegate(myPocketMonster.pokemonInfo) }
+                            ),
                         pokemonInfo = myPocketMonster.pokemonInfo,
                         pocketBallClickDelegate = { removeMyMonsterDelegate(myPocketMonster) },
                         pocketBallTestTag = TEST_TAG_MY_POCKET_ITEM_BALL_FORMAT_WITH_ID.format(myPocketMonster.catchId)
@@ -48,6 +51,7 @@ fun MyPocketHeader(
             },
             lazyRowTestTag = TEST_TAG_MY_POCKET_LAZY_ROW
         )
+        HorizontalDivider()
     }
 }
 
